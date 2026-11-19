@@ -1,30 +1,26 @@
-# Ansh Singh Rathore — Portfolio
+# Ansh Singh Rathore — Personal Portfolio (v2)
 
-Editorial developer portfolio built with React + Vite.
+A minimalist, editorial developer portfolio showcasing my work across **AI Engineering, Backend Systems, Statistical Modeling, and Full-Stack Web Development**.
 
-## Run locally
+🌐 **Live Site:** [ansh-portfolio-v2-plum.vercel.app](https://ansh-portfolio-v2-plum.vercel.app/)
 
-```bash
-npm install
-npm run dev
-```
+---
 
-Then open the local URL Vite prints.
+## ✨ Features
 
-## Build
+- **Editorial Brutalist UI:** High-contrast warm paper (`#EEE9DF`) and deep ink (`#171614`) palette with subtle film grain and custom cursor tracking.
+- **Full-Viewport Hero & Section Rhythm:** Responsive layout engineered to fit cleanly above the fold with smooth scroll-snap navigation.
+- **Interactive Case Studies & Modals:** Dedicated modals for project architectures, hackathon stories, and verified credentials with keyboard (`ESC`) and scroll-lock support.
+- **Command Palette (`Ctrl + K` / `⌘ + K`):** Quick keyboard navigation across all portfolio sections.
+- **Zero-Bloat Stack:** Built purely with React and custom CSS—no heavy UI component libraries.
 
-```bash
-npm run build
-```
+---
 
-## Deploy
+## 🛠️ Tech Stack
 
-This is ready for Vercel as a standard Vite app. The project URLs, profile links, resume and uploaded visual assets are already wired into the UI.
+- **Framework:** React 18 + Vite
+- **Styling:** Vanilla CSS3 (CSS Variables, CSS Grid, Responsive Clamp Typography)
+- **Typography:** Manrope & DM Mono
+- **Deployment:** Vercel
 
-### Design direction
-- Editorial developer aesthetic
-- Charcoal / warm cream / burnt orange palette
-- Large typography + asymmetric grids
-- Scroll reveal motion, hover image zoom, command palette (Ctrl/Cmd + K)
-- Project and certificate modal previews
-- Responsive layout for mobile
+---
