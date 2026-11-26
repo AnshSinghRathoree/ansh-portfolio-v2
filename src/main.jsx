@@ -11,8 +11,8 @@ const projects = [
     kicker: 'AI JOB HUNTING & OUTREACH AGENT',
     year: '2026',
     stack: 'Python · JobSpy · LLMs · Automation',
-    image: '/images/', // Replace with a screenshot of your Job Radar pipeline when ready
-    url: 'https://github.com/AnshSinghRathoree',
+    image: null, // Original animated concept graphic until a real screenshot is available
+    url: null,
     description: 'An automated daily job-discovery and application assistant built to scrape 50–60 targeted roles, tailor resumes per JD, and streamline morning outreach.',
     bullets: [
       'Aggregates fresh software & AI engineering postings daily using JobSpy with deduplication and role filtering.',
@@ -159,8 +159,9 @@ const arenaGallery = [
 function useReveal() {
   useEffect(() => {
     const els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('is-visible')); return; }
     const obs = new IntersectionObserver(
-      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); }),
+      entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); } }),
       { threshold: 0.06 }
     );
     els.forEach(el => obs.observe(el));
@@ -204,6 +205,7 @@ function App() {
         setActiveHack(null);
       }
     };
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('keydown', onKey);
     window.addEventListener('pointermove', onPointer, { passive: true });
@@ -215,7 +217,10 @@ function App() {
   }, []);
 
   const jump = id => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    const target = document.getElementById(id);
+    const details = target?.closest('details');
+    if (details) details.open = true;
+    requestAnimationFrame(() => target?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }));
     setPalette(false);
   };
 
@@ -226,16 +231,18 @@ function App() {
       <Nav scrolled={scrolled} onCommand={() => setPalette(true)} />
       <main>
         <Hero onWork={() => jump('work')} />
-        <About />
-        <Journey />
         <Projects onOpen={setActiveProject} />
-        <Hackathons onOpen={setActiveHack} />
         <Experience />
         <Skills />
+        <About />
+        <Hackathons onOpen={setActiveHack} />
         <Achievements />
-        <Arena />
-        <Certifications onOpen={setActiveCert} />
-        <BeyondCode />
+        <details className="extra-section"><summary>More about me <span>Timeline · certificates · sports · leadership</span></summary>
+          <Journey />
+          <Certifications onOpen={setActiveCert} />
+          <Arena />
+          <BeyondCode />
+        </details>
         <Contact />
       </main>
       <footer className="footer">
@@ -254,7 +261,7 @@ function App() {
 function Nav({ scrolled, onCommand }) {
   const items = [
     ['work', 'WORK'],
-    ['hackathons', 'HACKATHONS'],
+    ['skills', 'SKILLS'],
     ['experience', 'EXPERIENCE'],
     ['about', 'ABOUT'],
     ['contact', 'CONTACT']
@@ -270,7 +277,7 @@ function Nav({ scrolled, onCommand }) {
         ))}
       </nav>
       <button className="command" onClick={onCommand} aria-label="Open command menu">
-        <span>⌘</span>K
+        <span className="desktop-command">⌘ K</span><span className="mobile-command">MENU ☰</span>
       </button>
     </header>
   );
@@ -289,23 +296,24 @@ function Hero({ onWork }) {
           <div className="hero-copy">
             <p className="eyebrow reveal">ANSH SINGH RATHORE / 2026</p>
             <h1 className="hero-title">
-              <span className="line reveal delay-1">I LEARN WHAT</span>
-              <span className="line offset reveal delay-2">THE PROBLEM</span>
-              <span className="line reveal delay-3">DEMANDS.</span>
-              <span className="line accent-line reveal delay-4">THEN I BUILD.</span>
+              <span className="line">I build software.</span>
+              <span className="line accent-line">With AI.</span>
             </h1>
+            <div className="availability"><i /> OPEN TO SOFTWARE / AI ROLES</div>
             <div className="hero-bottom reveal delay-4">
-              <p>I build software around the problem in front of me — learning the stack, testing the idea, and staying with the build until it works.</p>
+              <p>Final-year CSE (Data Science) student building AI agents, backend APIs and data-driven web applications. I learn what the problem demands, then I build.</p>
               <div className="hero-actions">
                 <button className="btn btn-dark" onClick={onWork}>VIEW WORK <span>↘</span></button>
                 <a className="btn btn-outline" href="/Ansh-Singh-Rathore-Resume.pdf" target="_blank" rel="noreferrer">RESUME ↗</a>
               </div>
             </div>
+            <div className="hero-social"><a href="https://github.com/AnshSinghRathoree" target="_blank" rel="noreferrer">GitHub ↗</a><a href="https://www.linkedin.com/in/ansh-singh-rathore-125829304" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="mailto:sansh8690@gmail.com">Email ↗</a></div>
           </div>
           <div className="hero-photo-wrap reveal delay-2">
             <div className="photo-label">CURIOUS BY DEFAULT<br /><b>COMMITTED TO THE BUILD</b></div>
             <img className="hero-photo" src="/images/hero.jpg" alt="Ansh Singh Rathore holding a trophy" />
             <div className="hero-stamp">BUILD<br />LEARN<br />ADAPT</div>
+            <div className="pixel-bot" aria-hidden="true"><svg viewBox="0 0 40 40"><path fill="#e45b2a" d="M18 2h4v6h10v4h4v18h-6v6h-6v-6h-8v6h-6v-6H4V12h4V8h10z" /><path fill="#171614" d="M9 14h22v12H9z" /><g className="bot-eyes" fill="#fffaf1"><path d="M13 17h4v5h-4zM23 17h4v5h-4z" /></g></svg><span>BUILD MODE</span></div>
           </div>
         </div>
       </div>
@@ -330,10 +338,10 @@ function About() {
   return (
     <section className="section dark-section about section-pad full-section" id="about">
       <SectionHead
-        index="01"
+        index="04"
         eyebrow="MY STORY"
-        title={<>I LIKE BUILDING THINGS<br /><em>I DON'T ALREADY KNOW</em><br />HOW TO BUILD.</>}
-        copy="I started with HTML, CSS and JavaScript. The more projects I built, the more I wanted to understand what happens behind the interface — APIs, data, systems, and now AI."
+        title={<>Curiosity into <em>working software.</em></>}
+
       />
       <div className="about-layout">
         <div className="manifesto reveal">
@@ -362,7 +370,7 @@ function Journey() {
   return (
     <section className="journey section-pad full-section">
       <SectionHead
-        index="02"
+        index="07"
         eyebrow="THE JOURNEY"
         title="FROM MAKING PAGES TO BUILDING SYSTEMS"
         copy="A timeline of what changed — not just the technologies, but the kinds of problems I wanted to solve."
@@ -384,34 +392,44 @@ function Journey() {
   );
 }
 
+function RadarArt() {
+  return <div className="radar-art" role="img" aria-label="Illustrative job discovery radar, not a product screenshot">
+    <div className="radar-caption">AGENT / DISCOVERY <span>CONCEPT</span></div>
+    <div className="radar-screen"><div className="radar-sweep" /><i className="radar-blip b1" /><i className="radar-blip b2" /><i className="radar-blip b3" /><div className="radar-center" /></div>
+    <div className="radar-caption radar-bottom">SCAN → FILTER → MATCH <span>● WIP</span></div>
+  </div>;
+}
+function ProjectVisual({ project }) {
+  return project.id === 'job-radar' ? <RadarArt /> : <img src={project.image} alt={`${project.title} preview`} loading="lazy" onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement.classList.add('missing-preview'); }} />;
+}
 function Projects({ onOpen }) {
   return (
     <section className="projects section-pad full-section" id="work">
       <SectionHead
-        index="03"
+        index="01"
         eyebrow="SELECTED WORK"
-        title="THINGS I'VE BUILT."
-        copy="Active builds and shipped products across AI agents, natural-language analytics, statistical modeling, and full-stack web."
+        title="Selected projects."
+        copy="AI, backend, analytics and full-stack projects. Open any card for technical details."
       />
       <div className="project-grid">
-        {projects.map(p => (
-          <article className="project-card reveal" key={p.id} onClick={() => onOpen(p)}>
+        {[projects[1], projects[0], ...projects.slice(2)].map(p => (
+          <article className="project-card reveal" key={p.id} role="button" tabIndex={0} aria-label={`Open ${p.title} case study`} onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }} onClick={() => onOpen(p)}>
             <div className="project-image">
-              <img src={p.image} alt={p.title} />
+              <ProjectVisual project={p} />
               {p.status && <span className="status-badge">{p.status}</span>}
               <div className="image-overlay">OPEN CASE STUDY ↗</div>
             </div>
             <div className="project-card-meta">
               <div>
                 <div className="project-kicker-row">
-                  <span>{p.number} · {p.year}</span>
-                  {p.status && <span className="status-pill">{p.status}</span>}
+                  <span>{p.kicker} · {p.year}</span>
+
                 </div>
                 <h3>{p.title}</h3>
               </div>
               <p>{p.description}</p>
             </div>
-            <div className="project-stack">{p.stack}</div>
+            <div className="project-stack">{p.stack}</div><div className="card-cta">CASE STUDY <span>↗</span></div>
           </article>
         ))}
       </div>
@@ -423,7 +441,7 @@ function Hackathons({ onOpen }) {
   return (
     <section className="hackathons section-pad full-section dark-section" id="hackathons">
       <SectionHead
-        index="04"
+        index="05"
         eyebrow="HACKATHONS & COMPETITIONS"
         title="BUILT UNDER PRESSURE."
         copy="This is the competition trail — separate from leadership, speaking and sports. Each entry has the event context, the result, and the certificate when documented."
@@ -437,7 +455,7 @@ function Hackathons({ onOpen }) {
             </div>
             <div className="hack-cert">
               {h.cert ? (
-                <img src={h.cert} alt={`${h.title} certificate`} />
+                <img src={h.cert} alt={`${h.title} certificate`} loading="lazy" />
               ) : (
                 <div className="hack-no-cert">SIH<br /><b>COLLEGE ROUND</b></div>
               )}
@@ -466,10 +484,10 @@ function Experience() {
   return (
     <section className="dark-section experience section-pad full-section" id="experience">
       <SectionHead
-        index="05"
+        index="02"
         eyebrow="WHERE I'VE WORKED"
-        title="LEARNED BY SHIPPING."
-        copy="Different environments, same habit: take the requirement, understand the system, and make the thing work."
+        title="Experience."
+
       />
       <div className="experience-list">
         {exp.map(e => (
@@ -498,12 +516,12 @@ function Skills() {
     ['Cloud / Learning', 'AWS EC2 / S3 basics · Docker / deployment exposure · currently learning DevOps']
   ];
   return (
-    <section className="skills section-pad full-section">
+    <section className="skills section-pad full-section" id="skills">
       <SectionHead
-        index="06"
+        index="03"
         eyebrow="TECH STACK"
-        title="WHAT I WORK WITH."
-        copy="No percentage bars. Just the tools I actually use, plus the areas I’m deliberately learning next."
+        title="Technical skills."
+
       />
       <div className="skills-grid">
         {groups.map((g, i) => (
@@ -522,7 +540,7 @@ function Achievements() {
   return (
     <section className="dark-section achievements section-pad full-section">
       <SectionHead
-        index="07"
+        index="06"
         eyebrow="OTHER RESULTS"
         title="BEYOND THE HACKATHON."
         copy="Selected recognitions that belong outside the dedicated hackathon trail."
@@ -545,7 +563,7 @@ function Arena() {
   return (
     <section className="arena section-pad full-section">
       <SectionHead
-        index="08"
+        index="09"
         eyebrow="IN THE ARENA"
         title="THE OTHER SIDE OF THE SCREEN."
         copy="Kho-Kho, teams, tournaments and the moments where competition became a habit. Leadership and speaking are kept separate in the next section."
@@ -553,7 +571,7 @@ function Arena() {
       <div className="masonry">
         {arenaGallery.map(([src, cap], i) => (
           <figure className={`gallery-item g${i + 1} reveal`} key={src}>
-            <img src={src} alt={cap} />
+            <img src={src} alt={cap} loading="lazy" />
             <figcaption>
               <span>{cap}</span>
               <i>↗</i>
@@ -569,7 +587,7 @@ function Certifications({ onOpen }) {
   return (
     <section className="certifications section-pad full-section">
       <SectionHead
-        index="09"
+        index="08"
         eyebrow="LEARNING BEYOND THE BUILD"
         title="CERTIFICATES, NOT A COLLECTION."
         copy="Credentials I used to explore data, cloud, AI, security and development beyond whatever I was building at the time."
@@ -577,7 +595,7 @@ function Certifications({ onOpen }) {
       <div className="cert-featured">
         {certificates.slice(0, 4).map(c => (
           <button className="cert-card reveal" key={c.title} onClick={() => onOpen(c)}>
-            <div className="cert-image"><img src={c.image} alt={c.title} /></div>
+            <div className="cert-image"><img src={c.image} alt={c.title} loading="lazy" /></div>
             <div className="cert-meta">
               <span>{c.tag}</span>
               <b>{c.title}</b>
@@ -655,9 +673,9 @@ function Contact() {
 function ProjectModal({ project, onClose }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal project-modal" onClick={e => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>CLOSE ×</button>
-        <img src={project.image} alt={project.title} />
+      <div role="dialog" aria-modal="true" aria-label={project.title} className="modal project-modal" onClick={e => e.stopPropagation()}>
+        <button autoFocus className="modal-close" onClick={onClose}>CLOSE ×</button>
+        <div className="modal-visual"><ProjectVisual project={project} /></div>
         <div className="modal-body">
           <p className="eyebrow">
             {project.kicker} · {project.year} {project.status ? `· ${project.status}` : ''}
@@ -665,7 +683,7 @@ function ProjectModal({ project, onClose }) {
           <h2>{project.title}</h2>
           <p>{project.description}</p>
           <ul>{project.bullets.map(b => <li key={b}>{b}</li>)}</ul>
-          <a className="btn btn-dark" href={project.url} target="_blank" rel="noreferrer">LIVE / REPO ↗</a>
+          {project.url ? <a className="btn btn-dark" href={project.url} target="_blank" rel="noreferrer">{project.url.includes("github.com") ? "VIEW REPOSITORY" : "LIVE PROJECT"} ↗</a> : <p className="wip-note">In development · public demo not yet available.</p>}
         </div>
       </div>
     </div>
@@ -675,8 +693,8 @@ function ProjectModal({ project, onClose }) {
 function HackathonModal({ item, onClose }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal hack-modal" onClick={e => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>CLOSE ×</button>
+      <div role="dialog" aria-modal="true" aria-label={item.title} className="modal hack-modal" onClick={e => e.stopPropagation()}>
+        <button autoFocus className="modal-close" onClick={onClose}>CLOSE ×</button>
         {item.cert && <img src={item.cert} alt={`${item.title} certificate`} />}
         <div className="modal-body">
           <p className="eyebrow">{item.type} · {item.year}</p>
@@ -693,8 +711,8 @@ function HackathonModal({ item, onClose }) {
 function CertModal({ cert, onClose }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal cert-modal" onClick={e => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>CLOSE ×</button>
+      <div role="dialog" aria-modal="true" aria-label={cert.title} className="modal cert-modal" onClick={e => e.stopPropagation()}>
+        <button autoFocus className="modal-close" onClick={onClose}>CLOSE ×</button>
         <img src={cert.image} alt={cert.title} />
         <div className="modal-body">
           <p className="eyebrow">{cert.tag}</p>
@@ -711,13 +729,14 @@ function CommandPalette({ jump, close }) {
     ['work', 'Selected Work'],
     ['hackathons', 'Hackathons & Competitions'],
     ['experience', 'Experience'],
+    ['skills', 'Technical Skills'],
     ['about', 'About'],
     ['leadership', 'Leadership & Speaking'],
     ['contact', 'Contact']
   ], []);
   return (
     <div className="palette-backdrop" onClick={close}>
-      <div className="palette" onClick={e => e.stopPropagation()}>
+      <div role="dialog" aria-modal="true" aria-label="Navigation menu" className="palette" onClick={e => e.stopPropagation()}>
         <div className="palette-top"><span>JUMP TO</span><kbd>ESC</kbd></div>
         {items.map(([id, l]) => (
           <button key={id} onClick={() => jump(id)}>{l}<span>↗</span></button>
